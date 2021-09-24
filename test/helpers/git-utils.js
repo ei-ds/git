@@ -179,6 +179,21 @@ async function gitStaged(execaOptions) {
 }
 
 /**
+ * Get the remotes that contain a commit.
+ *
+ * @param {String} [sha] The sha of the commit to check
+ * @param {Object} [execaOpts] Options to pass to `execa`.
+ *
+ * @return {Array<String>} Array of remotes containing the commit with the given sha.
+ */
+async function gitPushedTo(sha, execaOptions) {
+  return (await execa('git', ['branch', '-r', '--contains', sha], execaOptions)).stdout
+    .split('\n')
+    .map(branch => branch.trim())
+    .filter(n => n);
+}
+
+/**
  * Get the list of files included in a commit.
  *
  * @param {String} ref The git reference for which to retrieve the files.
@@ -225,6 +240,7 @@ module.exports = {
   gitRemoteHead,
   gitStaged,
   gitCommitedFiles,
+  gitPushedTo,
   gitAdd,
   gitPush,
 };
