@@ -3,7 +3,16 @@ const test = require('ava');
 const {outputFile, remove} = require('fs-extra');
 const {stub} = require('sinon');
 const prepare = require('../lib/prepare');
-const {gitRepo, gitGetCommits, gitCommitedFiles, gitAdd, gitCommits, gitPush} = require('./helpers/git-utils');
+const {
+  gitRepo,
+  gitGetCommits,
+  gitCommitedFiles,
+  gitAdd,
+  gitCommits,
+  gitPush,
+  gitPushedTo,
+} = require('./helpers/git-utils');
+const {gitHead} = require('../lib/git');
 
 test.beforeEach(t => {
   // Stub the logger functions
@@ -254,6 +263,50 @@ test('Skip negated pattern if its alone in its group', async t => {
 
   t.deepEqual(await gitCommitedFiles('HEAD', {cwd, env}), ['file.js']);
   t.deepEqual(t.context.log.args[0], ['Found %d file(s) to commit', 1]);
+});
+
+test('Skip push if option push is set to false', async t => {
+  const {cwd, repositoryUrl} = await gitRepo(true);
+  const pluginConfig = {
+    doPush: false,
+  };
+  const branch = {name: 'master'};
+  const options = {repositoryUrl};
+  const env = {};
+  const lastRelease = {version: 'v1.0.0'};
+  const nextRelease = {version: '2.0.0', gitTag: 'v2.0.0', notes: 'Test release note'};
+  await outputFile(path.resolve(cwd, 'CHANGELOG.md'), 'Initial CHANGELOG');
+
+  await prepare(pluginConfig, {cwd, env, options, branch, lastRelease, nextRelease, logger: t.context.logger});
+
+  // Verify the files that have been commited
+  t.deepEqual(await gitCommitedFiles('HEAD', {cwd, env}), ['CHANGELOG.md']);
+  // Verify the commits are not pushed
+  t.deepEqual(await gitPushedTo(await gitHead({cwd, env}), {cwd, env}), []);
+});
+
+test('Push if option push is set to true', async t => {
+  const {cwd} = await gitRepo(true);
+  const pluginConfig = {
+    message: `I'm the message!`,
+    push: true,
+  };
+  const branch = {name: 'master'};
+  const options = {repositoryUrl: 'origin'};
+  const env = {};
+  const lastRelease = {version: 'v1.0.0'};
+  const nextRelease = {version: '2.0.0', gitTag: 'v2.0.0', notes: 'Test release note'};
+  await outputFile(path.resolve(cwd, 'CHANGELOG.md'), 'Initial CHANGELOG');
+
+  await prepare(pluginConfig, {cwd, env, options, branch, lastRelease, nextRelease, logger: t.context.logger});
+
+  // Verify the files that have been commited
+  t.deepEqual(await gitCommitedFiles('HEAD', {cwd, env}), ['CHANGELOG.md']);
+  // Verify the commits are pushed
+  t.deepEqual(await gitPushedTo(await gitHead({cwd, env}), {cwd, env}), [
+    'origin/HEAD -> origin/master',
+    'origin/master',
+  ]);
 });
 
 test('Skip commit if there is no files to commit', async t => {

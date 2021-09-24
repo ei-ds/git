@@ -83,6 +83,20 @@ test('Throw SemanticReleaseError if "message" option is a whitespace String', t 
   t.is(error.code, 'EINVALIDMESSAGE');
 });
 
-test('Verify undefined "message" and "assets"', t => {
+test('Verify undefined "message", "assets", and "doPush"', t => {
   t.notThrows(() => verify({}));
+});
+
+test('Throw SemanticReleaseError if "doPush" option is not a Boolean', t => {
+  const doPush = 42;
+  const [error] = t.throws(() => verify({doPush}));
+
+  t.is(error.name, 'SemanticReleaseError');
+  t.is(error.code, 'EINVALIDDOPUSH');
+});
+
+test('Verify "doPush" is a Boolean', t => {
+  const doPush = true;
+
+  t.notThrows(() => verify({doPush}));
 });
