@@ -1,5 +1,5 @@
 {
-  "name": "@semantic-release/git",
+  "name": "@ei-ds/git",
   "description": "semantic-release plugin to commit release assets to the project's git repository",
   "version": "0.0.0-development",
   "author": "Pierre Vanduynslager (https://github.com/pvdlg)",
@@ -9,11 +9,12 @@
     ]
   },
   "bugs": {
-    "url": "https://github.com/semantic-release/git/issues"
+    "url": "https://github.com/ei-ds/git/issues"
   },
   "contributors": [
     "Stephan Bönnemann <stephan@boennemann.me> (http://boennemann.me)",
-    "Gregor Martynus (https://twitter.com/gr2m)"
+    "Gregor Martynus (https://twitter.com/gr2m)",
+    "Damian Gola (https://github.com/ei-ds)"
   ],
   "dependencies": {
     "@semantic-release/error": "^2.1.0",
@@ -45,7 +46,7 @@
     "lib",
     "index.js"
   ],
-  "homepage": "https://github.com/semantic-release/git#readme",
+  "homepage": "https://github.com/ei-ds/git#readme",
   "keywords": [
     "changelog",
     "commit",
@@ -82,7 +83,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/semantic-release/git.git"
+    "url": "https://github.com/ei-ds/git.git"
   },
   "scripts": {
     "lint": "xo",
