@@ -1,10 +1,10 @@
-# @semantic-release/git
+# @ei-ds/git
 
 [**semantic-release**](https://github.com/semantic-release/semantic-release) plugin to commit release assets to the project's [git](https://git-scm.com/) repository.
 
-[![Build Status](https://github.com/semantic-release/git/workflows/Test/badge.svg)](https://github.com/semantic-release/git/actions?query=workflow%3ATest+branch%3Amaster) [![npm latest version](https://img.shields.io/npm/v/@semantic-release/git/latest.svg)](https://www.npmjs.com/package/@semantic-release/git)
-[![npm next version](https://img.shields.io/npm/v/@semantic-release/git/next.svg)](https://www.npmjs.com/package/@semantic-release/git)
-[![npm beta version](https://img.shields.io/npm/v/@semantic-release/git/beta.svg)](https://www.npmjs.com/package/@semantic-release/git)
+[![Build Status](https://github.com/ei-ds/git/workflows/Test/badge.svg)](https://github.com/ei-ds/git/actions?query=workflow%3ATest+branch%3Amaster) [![npm latest version](https://img.shields.io/npm/v/@ei-ds/git/latest.svg)](https://www.npmjs.com/package/@ei-ds/git)
+[![npm next version](https://img.shields.io/npm/v/@ei-ds/git/next.svg)](https://www.npmjs.com/package/@ei-ds/git)
+[![npm beta version](https://img.shields.io/npm/v/@ei-ds/git/beta.svg)](https://www.npmjs.com/package/@ei-ds/git)
 
 | Step               | Description                                                                                                                        |
 |--------------------|------------------------------------------------------------------------------------------------------------------------------------|
@@ -14,7 +14,7 @@
 ## Install
 
 ```bash
-$ npm install @semantic-release/git -D
+$ npm install @ei-ds/git -D
 ```
 
 ## Usage
@@ -26,9 +26,10 @@ The plugin can be configured in the [**semantic-release** configuration file](ht
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    ["@semantic-release/git", {
+    ["@ei-ds/git", {
       "assets": ["dist/**/*.{js,css}", "docs", "package.json"],
-      "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
+      "doPush": true
     }]
   ]
 }
@@ -69,6 +70,7 @@ When configuring branches permission on a Git hosting service (e.g. [GitHub prot
 |-----------|------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 | `message` | The message for the release commit. See [message](#message).                                                                 | `chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}`     |
 | `assets`  | Files to include in the release commit. Set to `false` to disable adding files to the release commit. See [assets](#assets). | `['CHANGELOG.md', 'package.json', 'package-lock.json', 'npm-shrinkwrap.json']` |
+| `doPush`  | Enable (`true`) or disable (`false`) pushing the commit. | `true` |
 
 #### `message`
 
@@ -117,11 +119,15 @@ If a directory is configured, all the files under this directory and its childre
 
 `[['dist/**/*.{js,css}', '!**/*.min.*']]`: include all `js` and `css` files in the `dist` directory and its sub-directories excluding the minified version.
 
+#### `doPush`
+
+Must be a `Boolean`. If set to `true` the commit created will be pushed to the remote, if set to `false` the changes are just committed but not pushed. In this case, a call to `git push` has to be done manually. This allows to create multiple commits and push them at once to trigger only one workflow/pipeline starting on the CI.
+
 ### Examples
 
 When used with the [@semantic-release/changelog](https://github.com/semantic-release/changelog) or [@semantic-release/npm](https://github.com/semantic-release/npm) plugins:
-- The [@semantic-release/changelog](https://github.com/semantic-release/changelog) plugin must be called first in order to update the changelog file so the `@semantic-release/git` and [@semantic-release/npm](https://github.com/semantic-release/npm) plugins can include it in the release.
-- The [@semantic-release/npm](https://github.com/semantic-release/npm) plugin must be called second in order to update the `package.json` file so the `@semantic-release/git` plugin can include it in the release commit.
+- The [@semantic-release/changelog](https://github.com/semantic-release/changelog) plugin must be called first in order to update the changelog file so the `@ei-ds/git` and [@semantic-release/npm](https://github.com/semantic-release/npm) plugins can include it in the release.
+- The [@semantic-release/npm](https://github.com/semantic-release/npm) plugin must be called second in order to update the `package.json` file so the `@ei-ds/git` plugin can include it in the release commit.
 
 ```json
 {
@@ -130,7 +136,7 @@ When used with the [@semantic-release/changelog](https://github.com/semantic-rel
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
     "@semantic-release/npm",
-    "@semantic-release/git"
+    "@ei-ds/git"
   ],
 }
 ```
